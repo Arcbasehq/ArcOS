@@ -1,10 +1,9 @@
 # ===================================
 # ArcOS - Windows Optimization Framework
-# Version 0.5.0
-# Beginner-Oriented Unified Build
+# Version 0.5.1
 # ===================================
 
-$ArcOSVersion = "0.5.0"
+$ArcOSVersion = "0.5.1"
 $ErrorActionPreference = "Stop"
 
 # ===============================
@@ -26,7 +25,7 @@ function Write-ArcLog {
     $Entry = "[$Time] [$Level] $Message"
 
     Write-Host $Entry
-    try { Add-Content -Path $Global:LogPath -Value $Entry } catch {}
+    try { Add-Content -Path $Global:LogPath -Value $Entry -ErrorAction SilentlyContinue } catch {}
 }
 
 # ===============================
@@ -81,10 +80,16 @@ Write-ArcLog "Version: $($WinInfo.DisplayVersion)"
 Write-ArcLog "Build: $Build"
 
 $Global:IsWindows11 = $Build -ge 22000
-Write-ArcLog ($Global:IsWindows11 ? "Windows 11 detected." : "Windows 10 detected.")
+
+if ($Global:IsWindows11) {
+    Write-ArcLog "Windows 11 detected."
+}
+else {
+    Write-ArcLog "Windows 10 detected."
+}
 
 # ===============================
-# Auto Mode (Beginner Safe Default)
+# Auto Mode
 # ===============================
 $ConfigPath = "$PSScriptRoot\config.json"
 
@@ -95,13 +100,13 @@ if (-not (Test-Path $ConfigPath)) {
 
 $Config = Get-Content $ConfigPath -Raw | ConvertFrom-Json
 
-# Force balanced performance mode automatically
 $Config.Mode = "Performance"
 $Config.RemoveAppx = $true
 $Config.OptimizeServices = $true
 $Config.DisableTasks = $true
 $Config.OptimizeUI = $true
-$Config | ConvertTo-Json -Depth 5 | Set-Content $ConfigPath
+
+$Config | ConvertTo-Json -Depth 5 | Set-Content $ConfigPath -Encoding utf8
 
 Write-ArcLog "Automatic Performance mode enabled."
 
@@ -137,9 +142,9 @@ Write-ArcLog "RAM: $RAM GB"
 Write-ArcLog "GPU: $GPU"
 
 # ===============================
-# Module Execution (All New Modules Included)
+# Module Execution
 # ===============================
-$Modules = Get-ChildItem "$PSScriptRoot\core\*.ps1" | Sort-Object Name
+$Modules = Get-ChildItem "$PSScriptRoot\core\*.ps1" -ErrorAction SilentlyContinue | Sort-Object Name
 
 foreach ($Module in $Modules) {
 
@@ -158,11 +163,15 @@ foreach ($Module in $Modules) {
 # Windows Update Integrity Check
 # ===============================
 try {
-    $WU = Get-Service wuauserv
-    Write-ArcLog "Windows Update status: $($WU.Status)"
+    $WU = Get-Service wuauserv -ErrorAction SilentlyContinue
+    if ($WU) {
+        Write-ArcLog "Windows Update status: $($WU.Status)"
+    } else {
+        Write-ArcLog "Windows Update service not found." "WARN"
+    }
 }
 catch {
-    Write-ArcLog "Windows Update service issue detected." "ERROR"
+    Write-ArcLog "Windows Update check failed." "ERROR"
 }
 
 # ===============================
@@ -173,7 +182,6 @@ $PostServices  = (Get-Service).Count
 
 Write-ArcLog "Post-run processes: $PostProcesses"
 Write-ArcLog "Post-run services: $PostServices"
-
 Write-ArcLog "Process difference: $($PreProcesses - $PostProcesses)"
 Write-ArcLog "Service difference: $($PreServices - $PostServices)"
 
