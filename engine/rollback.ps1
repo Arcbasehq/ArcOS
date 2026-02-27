@@ -1,15 +1,30 @@
-$Script:RollbackPath = Join-Path $PSScriptRoot '..\reports\rollback.json'
-
 function Initialize-Rollback {
 
     Write-ArcLog "Initializing rollback snapshot."
 
-    $services = Get-Service | Select-Object Name, StartType
+    # Get project root (one level above /engine)
+    $ProjectRoot = Split-Path $PSScriptRoot -Parent
 
-    $snapshot = @{
-        Services = $services
+    # Build reports path cleanly
+    $ReportsPath = Join-Path $ProjectRoot "reports"
+
+    # Ensure directory exists (even if you think it does)
+    if (-not (Test-Path $ReportsPath)) {
+        New-Item -Path $ReportsPath -ItemType Directory -Force | Out-Null
     }
 
-    $snapshot | ConvertTo-Json -Depth 5 |
-        Set-Content -Path $Script:RollbackPath
+    # Build rollback file path
+    $RollbackPath = Join-Path $ReportsPath "rollback.json"
+
+    # Snapshot data
+    $Snapshot = @{
+        Timestamp = Get-Date
+        Services  = Get-Service | Select-Object Name, Status, StartType
+        Tasks     = Get-ScheduledTask | Select-Object TaskName, TaskPath, State
+    }
+
+    # Write file
+    $Snapshot | ConvertTo-Json -Depth 5 | Set-Content -Path $RollbackPath -Encoding UTF8
+
+    Write-ArcLog "Rollback snapshot created at $RollbackPath."
 }
