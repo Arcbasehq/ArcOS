@@ -1,9 +1,9 @@
 # ===================================
 # ArcOS - Windows Optimization Framework
-# Version 0.5.1
+# Version 0.5.2
 # ===================================
 
-$ArcOSVersion = "0.5.1"
+$ArcOSVersion = "0.5.2"
 $ErrorActionPreference = "Stop"
 
 # ===============================
@@ -89,26 +89,57 @@ else {
 }
 
 # ===============================
-# Auto Mode
+# Load / Create Config Safely
 # ===============================
 $ConfigPath = "$PSScriptRoot\config.json"
 
 if (-not (Test-Path $ConfigPath)) {
-    Write-ArcLog "config.json missing." "ERROR"
-    exit 1
+    '{}' | Out-File $ConfigPath -Encoding utf8
 }
 
-$Config = Get-Content $ConfigPath -Raw | ConvertFrom-Json
+try {
+    $Config = Get-Content $ConfigPath -Raw | ConvertFrom-Json
+} catch {
+    $Config = @{}
+}
 
-$Config.Mode = "Performance"
-$Config.RemoveAppx = $true
-$Config.OptimizeServices = $true
-$Config.DisableTasks = $true
-$Config.OptimizeUI = $true
+# Ensure object type
+if ($Config -eq $null) { $Config = @{} }
+
+# Safely add properties if missing
+if (-not $Config.PSObject.Properties["Mode"]) {
+    $Config | Add-Member -NotePropertyName Mode -NotePropertyValue "Performance"
+} else {
+    $Config.Mode = "Performance"
+}
+
+if (-not $Config.PSObject.Properties["RemoveAppx"]) {
+    $Config | Add-Member -NotePropertyName RemoveAppx -NotePropertyValue $true
+} else {
+    $Config.RemoveAppx = $true
+}
+
+if (-not $Config.PSObject.Properties["OptimizeServices"]) {
+    $Config | Add-Member -NotePropertyName OptimizeServices -NotePropertyValue $true
+} else {
+    $Config.OptimizeServices = $true
+}
+
+if (-not $Config.PSObject.Properties["DisableTasks"]) {
+    $Config | Add-Member -NotePropertyName DisableTasks -NotePropertyValue $true
+} else {
+    $Config.DisableTasks = $true
+}
+
+if (-not $Config.PSObject.Properties["OptimizeUI"]) {
+    $Config | Add-Member -NotePropertyName OptimizeUI -NotePropertyValue $true
+} else {
+    $Config.OptimizeUI = $true
+}
 
 $Config | ConvertTo-Json -Depth 5 | Set-Content $ConfigPath -Encoding utf8
 
-Write-ArcLog "Automatic Performance mode enabled."
+Write-ArcLog "Configuration prepared."
 
 # ===============================
 # Performance Snapshot (Before)
@@ -131,25 +162,12 @@ catch {
 }
 
 # ===============================
-# Hardware Snapshot
-# ===============================
-$CPU = (Get-CimInstance Win32_Processor).Name
-$RAM = [Math]::Round((Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory / 1GB, 2)
-$GPU = (Get-CimInstance Win32_VideoController | Select-Object -First 1).Name
-
-Write-ArcLog "CPU: $CPU"
-Write-ArcLog "RAM: $RAM GB"
-Write-ArcLog "GPU: $GPU"
-
-# ===============================
 # Module Execution
 # ===============================
 $Modules = Get-ChildItem "$PSScriptRoot\core\*.ps1" -ErrorAction SilentlyContinue | Sort-Object Name
 
 foreach ($Module in $Modules) {
-
     Write-ArcLog "Executing module: $($Module.Name)"
-
     try {
         . $Module.FullName
         Write-ArcLog "Completed: $($Module.Name)"
@@ -157,21 +175,6 @@ foreach ($Module in $Modules) {
     catch {
         Write-ArcLog "Failed: $($Module.Name) - $_" "ERROR"
     }
-}
-
-# ===============================
-# Windows Update Integrity Check
-# ===============================
-try {
-    $WU = Get-Service wuauserv -ErrorAction SilentlyContinue
-    if ($WU) {
-        Write-ArcLog "Windows Update status: $($WU.Status)"
-    } else {
-        Write-ArcLog "Windows Update service not found." "WARN"
-    }
-}
-catch {
-    Write-ArcLog "Windows Update check failed." "ERROR"
 }
 
 # ===============================
@@ -185,9 +188,6 @@ Write-ArcLog "Post-run services: $PostServices"
 Write-ArcLog "Process difference: $($PreProcesses - $PostProcesses)"
 Write-ArcLog "Service difference: $($PreServices - $PostServices)"
 
-# ===============================
-# Completion
-# ===============================
 Write-ArcLog "ArcOS finished successfully."
 
 Write-Host ""
