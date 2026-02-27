@@ -1,0 +1,8 @@
+[
+  {
+    "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+    "Name": "EnableTransparency",
+    "Value": 0,
+    "Type": "DWord"
+  }
+]

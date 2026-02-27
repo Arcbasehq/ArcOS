@@ -1,0 +1,7 @@
+[
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\AdvertisingInfo",
+    "Name": "DisabledByGroupPolicy",
+    "Value": 1
+  }
+]

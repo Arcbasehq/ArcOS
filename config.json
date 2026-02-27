@@ -1,7 +1,0 @@
-{
-  "DisableTelemetry": true,
-  "RemoveAppx": true,
-  "OptimizeServices": true,
-  "DisableTasks": true,
-  "OptimizeUI": true
-}
