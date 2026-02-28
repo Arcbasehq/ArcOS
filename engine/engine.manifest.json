@@ -3,24 +3,77 @@
     "risk": "Stable",
     "requiresReboot": false,
     "reversible": true,
-    "minBuild": 19045
+    "minBuild": 19045,
+    "description": "Optimizes Windows services for better performance and reduced resource usage"
+  },
+  "TaskEngine": {
+    "risk": "Stable",
+    "requiresReboot": false,
+    "reversible": true,
+    "minBuild": 19045,
+    "description": "Manages scheduled tasks to reduce background activity"
   },
   "AppxEngine": {
     "risk": "Performance",
     "requiresReboot": false,
     "reversible": true,
-    "minBuild": 19045
+    "minBuild": 19045,
+    "description": "Removes unnecessary AppX packages and bloatware"
+  },
+  "RegistryEngine": {
+    "risk": "Performance",
+    "requiresReboot": false,
+    "reversible": true,
+    "minBuild": 19045,
+    "description": "Applies registry optimizations for better system performance"
+  },
+  "PolicyEngine": {
+    "risk": "Performance",
+    "requiresReboot": false,
+    "reversible": true,
+    "minBuild": 19045,
+    "description": "Configures group policies for privacy and performance"
   },
   "PerformanceEngine": {
     "risk": "Performance",
     "requiresReboot": true,
     "reversible": true,
-    "minBuild": 19045
+    "minBuild": 19045,
+    "description": "Applies system-wide performance optimizations"
+  },
+  "UIEngine": {
+    "risk": "Minimal",
+    "requiresReboot": false,
+    "reversible": true,
+    "minBuild": 19045,
+    "description": "Optimizes UI performance and visual effects"
+  },
+  "WallpaperEngine": {
+    "risk": "Minimal",
+    "requiresReboot": false,
+    "reversible": true,
+    "minBuild": 19045,
+    "description": "Manages wallpaper customization"
+  },
+  "AvatarEngine": {
+    "risk": "Minimal",
+    "requiresReboot": false,
+    "reversible": true,
+    "minBuild": 19045,
+    "description": "Configures user avatar and profile settings"
   },
   "OneDriveEngine": {
     "risk": "Minimal",
     "requiresReboot": true,
     "reversible": false,
-    "minBuild": 19045
+    "minBuild": 19045,
+    "description": "Manages OneDrive integration and settings"
+  },
+  "EdgeEngine": {
+    "risk": "Experimental",
+    "requiresReboot": false,
+    "reversible": true,
+    "minBuild": 19045,
+    "description": "Optimizes Microsoft Edge browser settings"
   }
 }

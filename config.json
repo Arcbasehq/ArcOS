@@ -1,0 +1,125 @@
+{
+  "version": "1.0",
+  "profile": "balanced",
+  "engines": {
+    "ServiceEngine": {
+      "enabled": true,
+      "config": {
+        "disableTelemetryServices": true,
+        "disableDiagnosticServices": true,
+        "disableXboxServices": true,
+        "optimizeForPerformance": true
+      }
+    },
+    "TaskEngine": {
+      "enabled": true,
+      "config": {
+        "disableTelemetryTasks": true,
+        "disableMaintenanceTasks": false,
+        "disableUpdateTasks": false
+      }
+    },
+    "AppxEngine": {
+      "enabled": true,
+      "config": {
+        "removeAllBloatware": false,
+        "preserveStore": true,
+        "preserveCalculator": true,
+        "preservePhotos": true,
+        "customRemoveList": [
+          "Microsoft.3DBuilder",
+          "Microsoft.GetHelp",
+          "Microsoft.Microsoft3DViewer",
+          "Microsoft.MicrosoftOfficeHub",
+          "Microsoft.MicrosoftSolitaireCollection",
+          "Microsoft.MixedReality.Portal",
+          "Microsoft.Office.OneNote",
+          "Microsoft.People",
+          "Microsoft.SkypeApp",
+          "Microsoft.Wallet",
+          "Microsoft.WebMediaExtensions",
+          "Microsoft.WindowsMaps",
+          "Microsoft.ZuneMusic",
+          "Microsoft.ZuneVideo"
+        ]
+      }
+    },
+    "RegistryEngine": {
+      "enabled": true,
+      "config": {
+        "disableTelemetry": true,
+        "disableExperiments": true,
+        "disableAdvertisingID": true,
+        "disableBackgroundApps": false,
+        "enableDarkMode": true,
+        "disableGameDVR": true
+      }
+    },
+    "PolicyEngine": {
+      "enabled": true,
+      "config": {
+        "disableTelemetry": true,
+        "disableAppSuggestions": true,
+        "disablePasswordReveal": false,
+        "disableLockScreenCamera": true,
+        "disableCortana": true,
+        "disableWindowsTips": true
+      }
+    },
+    "PerformanceEngine": {
+      "enabled": true,
+      "config": {
+        "disableVisualEffects": false,
+        "disableAnimations": false,
+        "optimizePowerSettings": true,
+        "disableIndexing": false,
+        "disableSuperfetch": false
+      }
+    },
+    "UIEngine": {
+      "enabled": true,
+      "config": {
+        "disableTransparency": false,
+        "disableTaskbarAnimations": false,
+        "disableWindowAnimations": false,
+        "enableCompactMode": true
+      }
+    },
+    "WallpaperEngine": {
+      "enabled": true,
+      "config": {
+        "wallpaperStyle": "fill",
+        "wallpaperPath": "wallpapers/dark.jpg",
+        "accentColor": "#0078D7"
+      }
+    },
+    "AvatarEngine": {
+      "enabled": true,
+      "config": {
+        "avatarPath": "user/pfp.png",
+        "useCustomAvatar": true
+      }
+    },
+    "OneDriveEngine": {
+      "enabled": false,
+      "config": {
+        "uninstallOneDrive": false,
+        "disableOneDriveStartup": true
+      }
+    },
+    "EdgeEngine": {
+      "enabled": false,
+      "config": {
+        "disableStartupBoost": true,
+        "disableBackgroundMode": true
+      }
+    }
+  },
+  "advanced": {
+    "createRestorePoint": true,
+    "skipCompatibilityCheck": false,
+    "dryRunMode": false,
+    "verboseLogging": false,
+    "autoReboot": true
+  }
+}
