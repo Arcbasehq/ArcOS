@@ -5,7 +5,12 @@ function Invoke-TaskEngine {
 
     Write-ArcLog "Starting scheduled task optimization."
 
-    $manifestPath = Join-Path $PSScriptRoot '..\manifests\tasks.json'
+    $manifestPath = if ($Global:ArcManifestDir) {
+        Join-Path $Global:ArcManifestDir 'tasks.json'
+    }
+    else {
+        Join-Path $PSScriptRoot '..\manifests\tasks.json'
+    }
 
     if (-not (Test-Path $manifestPath)) {
         Write-ArcLog "tasks.json manifest not found." "WARN"

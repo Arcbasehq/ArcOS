@@ -1,6 +1,11 @@
 function Invoke-RegistryEngine {
 
-    $manifest = Join-Path $PSScriptRoot '..\manifests\registry.json'
+    $manifest = if ($Global:ArcManifestDir) {
+        Join-Path $Global:ArcManifestDir 'registry.json'
+    }
+    else {
+        Join-Path $PSScriptRoot '..\manifests\registry.json'
+    }
     if (-not (Test-Path $manifest)) { return }
 
     $entries = Get-Content $manifest -Raw | ConvertFrom-Json

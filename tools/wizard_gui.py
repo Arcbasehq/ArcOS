@@ -678,16 +678,23 @@ class ArcWizard(ctk.CTk):
         mf   = td / "manifests"
 
         # Build a runner script on-the-fly
+        # ps() converts backslashes → forward slashes (PowerShell accepts both)
+        # This avoids quoting issues on Windows paths with spaces.
+        def ps(p) -> str:
+            return str(p).replace("\\", "/")
+
         runner = td / "_runner.ps1"
         lines  = [
             "$ErrorActionPreference = 'Continue'",
-            f". '{eng / 'logger.ps1'}'",
+            # Inject manifest dir so engines resolve paths correctly regardless of $PSScriptRoot
+            f'$Global:ArcManifestDir = "{ps(mf)}"',
+            f'. "{ps(eng / "logger.ps1")}"',
         ]
 
         if not dry:
             rollback = eng / "rollback.ps1"
             if rollback.exists():
-                lines += [f". '{rollback}'", "Initialize-Rollback"]
+                lines += [f'. "{ps(rollback)}"', "Initialize-Rollback"]
 
         for name in selected:
             fname = engine_map.get(name)
@@ -698,7 +705,7 @@ class ArcWizard(ctk.CTk):
                 continue
             lines += [
                 f"Write-Host '=ENGINE={name}=' -ForegroundColor Cyan",
-                f". '{ep}'",
+                f'. "{ps(ep)}"',
             ]
             if not dry:
                 lines.append(f"Invoke-{name}")
@@ -706,7 +713,7 @@ class ArcWizard(ctk.CTk):
                 lines.append(f"Write-Host '[DRY RUN] Would run: Invoke-{name}' -ForegroundColor Yellow")
 
         lines.append("Write-Host '=DONE='")
-        runner.write_text("\n".join(lines))
+        runner.write_text("\n".join(lines), encoding="utf-8")
 
         self._set_progress(0.0, "Launching PowerShell…")
         self._log(f"{'[DRY RUN] ' if dry else ''}Running {total} engine(s)...\n")

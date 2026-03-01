@@ -6,7 +6,12 @@ function Invoke-ServiceEngine {
     Write-ArcLog "Starting service optimization."
 
     # Load service list from manifest
-    $manifestPath = Join-Path $PSScriptRoot '..\manifests\services.json'
+    $manifestPath = if ($Global:ArcManifestDir) {
+        Join-Path $Global:ArcManifestDir 'services.json'
+    }
+    else {
+        Join-Path $PSScriptRoot '..\manifests\services.json'
+    }
 
     if (-not (Test-Path $manifestPath)) {
         Write-ArcLog "services.json manifest not found." "WARN"

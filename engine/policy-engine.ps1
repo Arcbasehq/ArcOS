@@ -1,6 +1,11 @@
 function Invoke-PolicyEngine {
 
-    $manifest = Join-Path $PSScriptRoot '..\manifests\policies.json'
+    $manifest = if ($Global:ArcManifestDir) {
+        Join-Path $Global:ArcManifestDir 'policies.json'
+    }
+    else {
+        Join-Path $PSScriptRoot '..\manifests\policies.json'
+    }
     if (-not (Test-Path $manifest)) { return }
 
     $policies = Get-Content $manifest -Raw | ConvertFrom-Json
