@@ -1,18 +1,5 @@
 $ErrorActionPreference = 'Stop'
 
-# Load Core Modules
-# =====================================================
-
-. "$enginePath\logger.ps1"
-. "$enginePath\precheck.ps1"
-. "$enginePath\rollback.ps1"
-. "$enginePath\postcheck.ps1"
-
-# Load Engines
-Get-ChildItem "$enginePath\*-engine.ps1" | ForEach-Object {
-    . $_.FullName
-}
-=======
 # =====================================================
 # Command Line Arguments
 # =====================================================
@@ -25,8 +12,8 @@ for ($i = 0; $i -lt $args.Length; $i++) {
     switch ($args[$i]) {
         "--rollback" {
             $rollbackMode = $true
-            if ($i + 1 -lt $args.Length -and $args[$i+1] -notlike "-") {
-                $rollbackFile = $args[$i+1]
+            if ($i + 1 -lt $args.Length -and $args[$i + 1] -notlike "-") {
+                $rollbackFile = $args[$i + 1]
                 $i++
             }
         }
@@ -64,19 +51,33 @@ function Show-Help {
     Write-Host ""
 }
 
+# =====================================================
+# Paths
+# =====================================================
+
+$root = Split-Path -Parent $MyInvocation.MyCommand.Path
+$enginePath = Join-Path $root 'engine'
+$reportPath = Join-Path $root 'reports'
+$manifest = Join-Path $enginePath 'engine.manifest.json'
+
+if (-not (Test-Path $reportPath)) {
+    New-Item -ItemType Directory -Path $reportPath | Out-Null
+}
+
 if ($rollbackMode) {
     Write-Host "Rolling back system state..." -ForegroundColor Yellow
     try {
         . "$enginePath\rollback.ps1"
         $result = Apply-Rollback -RollbackFile $rollbackFile
         if ($result) {
-            Show-SuccessMessage -Message "Rollback completed successfully."
-        } else {
-            Show-ErrorMessage -Message "Rollback failed."
+            Write-Host "Rollback completed successfully." -ForegroundColor Green
+        }
+        else {
+            Write-Host "Rollback failed." -ForegroundColor Red
         }
     }
     catch {
-        Show-ErrorMessage -Message "Rollback error" -Details $_.Exception.Message
+        Write-Host "Rollback error: $($_.Exception.Message)" -ForegroundColor Red
     }
     exit 0
 }
@@ -93,36 +94,8 @@ if ($rollbackMode) {
 # Load Engines
 Get-ChildItem "$enginePath\*-engine.ps1" | ForEach-Object {
     . $_.FullName
-}Windows Build Detection
-# =====================================================
-
-$Build = [int](Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion").CurrentBuild
-$Global:CurrentBuild = $Build
-=======
-# =====================================================
-# Windows Build Detection
-# =====================================================
-
-try {
-    $Build = [int](Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion").CurrentBuild
-    $Global:CurrentBuild = $Build
-    Show-InfoMessage -Message "Detected Windows build: $Build"
 }
-catch {
-    Show-ErrorMessage -Message "Failed to detect Windows build." -Details $_.Exception.Message
-    exit 1
-}Admin Validation
-# =====================================================
 
-$principal = New-Object Security.Principal.WindowsPrincipal(
-    [Security.Principal.WindowsIdentity]::GetCurrent()
-)
-
-if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    Write-Host "ArcOS must be run as Administrator."
-    exit 1
-}
-=======
 # =====================================================
 # Admin Validation
 # =====================================================
@@ -165,56 +138,41 @@ function Show-InfoMessage {
     Write-Host "INFO: $Message" -ForegroundColor Cyan
 }
 
-$principal = New-Object Security.Principal.WindowsPrincipal(
-    [Security.Principal.WindowsIdentity]::GetCurrent()
-)
+if ($IsWindows) {
+    $principal = New-Object Security.Principal.WindowsPrincipal(
+        [Security.Principal.WindowsIdentity]::GetCurrent()
+    )
 
-if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    Show-ErrorMessage -Message "ArcOS must be run as Administrator." -Details "Please right-click and select 'Run as Administrator'"
-    exit 1
-}Configuration Loading
-# =====================================================
-
-$configPath = Join-Path $root "config.json"
-
-if (-not (Test-Path $configPath)) {
-    Write-Host "Configuration file missing. Creating default config..."
-    # Create default config
-    $defaultConfig = @{
-        version = "1.0"
-        profile = "balanced"
-        engines = @{}
-        advanced = @{
-            createRestorePoint = $true
-            skipCompatibilityCheck = $false
-            dryRunMode = $false
-            verboseLogging = $false
-            autoReboot = $true
-        }
+    if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+        Show-ErrorMessage -Message "ArcOS must be run as Administrator." -Details "Please right-click and select 'Run as Administrator'"
+        exit 1
     }
-    
-    # Enable all engines by default
-    $EngineManifest.Keys | ForEach-Object {
-        $defaultConfig.engines.$_ = @{
-            enabled = $true
-            config = @{}
-        }
-    }
-    
-    $defaultConfig | ConvertTo-Json -Depth 10 | Out-File $configPath
-    Write-Host "Default configuration created. Please review config.json and run again."
-    exit 0
+}
+else {
+    Show-WarningMessage -Message "Admin check skipped (non-Windows platform)."
 }
 
-$Config = Get-Content $configPath -Raw | ConvertFrom-Json
-=======
+# =====================================================
+# Windows Build Detection
+# =====================================================
+
+try {
+    $Build = [int](Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion").CurrentBuild
+    $Global:CurrentBuild = $Build
+    Show-InfoMessage -Message "Detected Windows build: $Build"
+}
+catch {
+    Show-ErrorMessage -Message "Failed to detect Windows build." -Details $_.Exception.Message
+    exit 1
+}
+
 # =====================================================
 # Configuration Loading
 # =====================================================
 
 $configPath = Join-Path $root "config.json"
 
-function Validate-Configuration {
+function Test-Configuration {
     param (
         [object]$ConfigToValidate
     )
@@ -233,12 +191,12 @@ function Validate-Configuration {
         $errors += "Invalid profile: '$($ConfigToValidate.profile)'. Valid options: $($validProfiles -join ', ')"
     }
     
-    # Validate engines section
-    $EngineManifest.Keys | ForEach-Object {
-        $engineName = $_
+    # Validate engines section - use the engines from config since EngineManifest might not be loaded yet
+    foreach ($engineName in $ConfigToValidate.engines.Keys) {
         if (-not $ConfigToValidate.engines.$engineName) {
             $errors += "Missing configuration for engine: $engineName"
-        } elseif (-not [bool]::TryParse($ConfigToValidate.engines.$engineName.enabled.ToString(), [ref]$null)) {
+        }
+        elseif (-not [bool]::TryParse($ConfigToValidate.engines.$engineName.enabled.ToString(), [ref]$null)) {
             $errors += "Invalid 'enabled' value for engine $engineName (must be boolean)"
         }
     }
@@ -258,23 +216,28 @@ if (-not (Test-Path $configPath)) {
     Write-Host "Configuration file missing. Creating default config..."
     # Create default config
     $defaultConfig = @{
-        version = "1.0"
-        profile = "balanced"
-        engines = @{}
+        version  = "1.0"
+        profile  = "balanced"
+        engines  = @{}
         advanced = @{
-            createRestorePoint = $true
+            createRestorePoint     = $true
             skipCompatibilityCheck = $false
-            dryRunMode = $false
-            verboseLogging = $false
-            autoReboot = $true
+            dryRunMode             = $false
+            verboseLogging         = $false
+            autoReboot             = $true
         }
     }
     
-    # Enable all engines by default
-    $EngineManifest.Keys | ForEach-Object {
-        $defaultConfig.engines.$_ = @{
+    # Enable all engines by default - use known engine list since manifest might not be loaded
+    $defaultEngines = @(
+        "ServiceEngine", "TaskEngine", "AppxEngine", "RegistryEngine", "PolicyEngine",
+        "PerformanceEngine", "UIEngine", "WallpaperEngine", "AvatarEngine", "OneDriveEngine", "EdgeEngine"
+    )
+    
+    foreach ($engine in $defaultEngines) {
+        $defaultConfig.engines.$engine = @{
             enabled = $true
-            config = @{}
+            config  = @{}
         }
     }
     
@@ -287,12 +250,12 @@ try {
     $Config = Get-Content $configPath -Raw | ConvertFrom-Json
     
     # Validate configuration
-    $validationErrors = Validate-Configuration -ConfigToValidate $Config
+    $validationErrors = Test-Configuration -ConfigToValidate $Config
     
     if ($validationErrors.Count -gt 0) {
         Write-Host "Configuration validation errors:" -ForegroundColor Red
-        foreach ($error in $validationErrors) {
-            Write-Host "  - $error" -ForegroundColor Red
+        foreach ($validationError in $validationErrors) {
+            Write-Host "  - $validationError" -ForegroundColor Red
         }
         exit 1
     }
@@ -302,241 +265,7 @@ try {
 catch {
     Write-Host "Failed to load configuration: $($_.Exception.Message)" -ForegroundColor Red
     exit 1
-}Controlled Restart
-# =====================================================
-
-if ($Global:RebootRequired) {
-    Write-Host ""
-    Write-Host "Reboot required. Restarting in 5 seconds..."
-    Start-Sleep -Seconds 5
-    Restart-Computer -Force
 }
-else {
-    Write-Host ""
-    Write-Host "ArcOS completed. No reboot required."
-}
-=======
-# =====================================================
-# Controlled Restart
-# =====================================================
-
-if ($Global:RebootRequired -and $Config.advanced.autoReboot) {
-    Write-Host ""
-    Write-Host "Reboot required. Restarting in 5 seconds..."
-    Start-Sleep -Seconds 5
-    Restart-Computer -Force
-} elseif ($Global:RebootRequired) {
-    Write-Host ""
-    Write-Host "Reboot required but auto-reboot disabled. Please restart manually."
-} else {
-    Write-Host ""
-    Write-Host "ArcOS completed successfully. No reboot required."
-}
-
-Write-Host ""
-Write-Host "Summary:"
-Write-Host "- Profile used: $SelectedProfile"
-Write-Host "- Engines executed: $($ExecutionReport.Count)"
-Write-Host "- Successful: $($ExecutionReport.Where({$_.Status -eq 'Success'}).Count)"
-Write-Host "- Failed: $($ExecutionReport.Where({$_.Status -eq 'Failed'}).Count)"
-Write-Host "- Report location: $reportPath\deployment.json"Reporting
-# =====================================================
-
-$ReportData = @{
-    Timestamp     = Get-Date
-    WindowsBuild  = $Global:CurrentBuild
-    Profile       = $SelectedProfile
-    Processes     = (Get-Process).Count
-    Services      = (Get-Service).Count
-    RAM_Used_MB   = [math]::Round(
-        ((Get-CimInstance Win32_OperatingSystem).TotalVisibleMemorySize -
-         (Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory) / 1024
-    )
-    Engines       = $ExecutionReport
-}
-
-$ReportData | ConvertTo-Json -Depth 5 |
-    Out-File (Join-Path $reportPath "deployment.json")
-
-Write-ArcLog "ArcOS deployment complete."
-=======
-# =====================================================
-# Reporting
-# =====================================================
-
-$ReportData = @{
-    Timestamp     = Get-Date
-    WindowsBuild  = $Global:CurrentBuild
-    Profile       = $SelectedProfile
-    Processes     = (Get-Process).Count
-    Services      = (Get-Service).Count
-    RAM_Used_MB   = [math]::Round(
-        ((Get-CimInstance Win32_OperatingSystem).TotalVisibleMemorySize -
-         (Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory) / 1024
-    )
-    Engines       = $ExecutionReport
-    Configuration = @{
-        Profile = $Config.profile
-        AdvancedSettings = $Config.advanced
-        EngineSettings = @{}
-        
-        # Add enabled/disabled status for each engine
-        $EngineManifest.Keys | ForEach-Object {
-            $ReportData.Configuration.EngineSettings.$_ = @{
-                Enabled = $Config.engines.$_.enabled
-                Config = $Config.engines.$_.config
-            }
-        }
-    }
-}
-
-$ReportData | ConvertTo-Json -Depth 10 |
-    Out-File (Join-Path $reportPath "deployment.json")
-
-Write-ArcLog "ArcOS deployment complete. Report saved to $reportPath\deployment.json"
-
-# Save configuration backup
-$Config | ConvertTo-Json -Depth 10 |
-    Out-File (Join-Path $reportPath "config-backup.json")Deployment Start
-# =====================================================
-
-Write-ArcLog "ArcOS deployment starting."
-Invoke-Precheck
-Initialize-Rollback
-
-# Ordered execution
-$EnginesToRun = @(
-    "OneDriveEngine",
-    "ServiceEngine",
-    "TaskEngine",
-    "AppxEngine",
-    "RegistryEngine",
-    "PolicyEngine",
-    "AvatarEngine",
-    "PerformanceEngine",
-    "UIEngine",
-    "WallpaperEngine"
-)
-
-foreach ($Engine in $EnginesToRun) {
-    Invoke-EngineSafely -EngineName $Engine
-}
-=======
-# =====================================================
-# Playbook Integration
-# =====================================================
-
-function Load-Playbook {
-    param (
-        [string]$PlaybookName
-    )
-    
-    $playbookPath = Join-Path $root "playbooks" "$PlaybookName.json"
-    
-    if (Test-Path $playbookPath) {
-        return Get-Content $playbookPath -Raw | ConvertFrom-Json
-    }
-    
-    return $null
-}
-
-# Try to load the playbook based on profile
-$Playbook = Load-Playbook -PlaybookName $SelectedProfile
-
-if (-not $Playbook) {
-    Write-ArcLog "Playbook '$SelectedProfile' not found, using default engine order" "WARN"
-    $EnginesToRun = @(
-        "ServiceEngine",
-        "TaskEngine",
-        "AppxEngine",
-        "RegistryEngine",
-        "PolicyEngine",
-        "UIEngine",
-        "AvatarEngine",
-        "PerformanceEngine",
-        "WallpaperEngine",
-        "OneDriveEngine",
-        "EdgeEngine"
-    )
-} else {
-    Write-ArcLog "Using playbook: $($Playbook.name)"
-    $EnginesToRun = $Playbook.engines
-}
-
-# =====================================================
-# Deployment Start
-# =====================================================
-
-Write-ArcLog "ArcOS deployment starting with profile: $SelectedProfile"
-Invoke-Precheck
-Initialize-Rollback
-
-foreach ($Engine in $EnginesToRun) {
-    # Check if engine is enabled in config
-    if ($Config.engines.$Engine.enabled -eq $false) {
-        Write-ArcLog "$Engine skipped (disabled in config)"
-        continue
-    }
-    
-    Invoke-EngineSafely -EngineName $Engine
-}Metadata + Risk Handling
-# =====================================================
-
-$RiskOrder = @{
-    "Stable"       = 1
-    "Performance"  = 2
-    "Minimal"      = 3
-    "Experimental" = 4
-}
-
-$SelectedProfile = $env:ARCOS_PROFILE
-if (-not $SelectedProfile) {
-    $SelectedProfile = "Performance"
-}
-
-if (-not (Test-Path $manifest)) {
-    Write-Host "Engine manifest missing."
-    exit 1
-}
-
-$EngineManifest = Get-Content $manifest -Raw | ConvertFrom-Json
-=======
-# =====================================================
-# Configuration Loading
-# =====================================================
-
-$configPath = Join-Path $root "config.json"
-
-if (-not (Test-Path $configPath)) {
-    Write-Host "Configuration file missing. Creating default config..."
-    # Create default config
-    $defaultConfig = @{
-        version = "1.0"
-        profile = "balanced"
-        engines = @{}
-        advanced = @{
-            createRestorePoint = $true
-            skipCompatibilityCheck = $false
-            dryRunMode = $false
-            verboseLogging = $false
-            autoReboot = $true
-        }
-    }
-    
-    # Enable all engines by default
-    $EngineManifest.Keys | ForEach-Object {
-        $defaultConfig.engines.$_ = @{
-            enabled = $true
-            config = @{}
-        }
-    }
-    
-    $defaultConfig | ConvertTo-Json -Depth 10 | Out-File $configPath
-    Write-Host "Default configuration created. Please review config.json and run again."
-    exit 0
-}
-
-$Config = Get-Content $configPath -Raw | ConvertFrom-Json
 
 # =====================================================
 # Metadata + Risk Handling
@@ -559,75 +288,49 @@ if (-not (Test-Path $manifest)) {
     exit 1
 }
 
-$EngineManifest = Get-Content $manifest -Raw | ConvertFrom-Json=====================================================
-# Admin Validation
-# =====================================================
-
-$principal = New-Object Security.Principal.WindowsPrincipal(
-    [Security.Principal.WindowsIdentity]::GetCurrent()
-)
-
-if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    Write-Host "ArcOS must be run as Administrator."
-    exit 1
-}
-
-# =====================================================
-# Windows Build Detection
-# =====================================================
-
-$Build = [int](Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion").CurrentBuild
-$Global:CurrentBuild = $Build
-
-# =====================================================
-# Paths
-# =====================================================
-
-$root       = Split-Path -Parent $MyInvocation.MyCommand.Path
-$enginePath = Join-Path $root 'engine'
-$reportPath = Join-Path $root 'reports'
-$manifest   = Join-Path $enginePath 'engine.manifest.json'
-
-if (-not (Test-Path $reportPath)) {
-    New-Item -ItemType Directory -Path $reportPath | Out-Null
-}
-
-# =====================================================
-# Load Core Modules
-# =====================================================
-
-. "$enginePath\logger.ps1"
-. "$enginePath\precheck.ps1"
-. "$enginePath\rollback.ps1"
-. "$enginePath\postcheck.ps1"
-
-# Load Engines
-Get-ChildItem "$enginePath\*-engine.ps1" | ForEach-Object {
-    . $_.FullName
-}
-
-# =====================================================
-# Metadata + Risk Handling
-# =====================================================
-
-$RiskOrder = @{
-    "Stable"       = 1
-    "Performance"  = 2
-    "Minimal"      = 3
-    "Experimental" = 4
-}
-
-$SelectedProfile = $env:ARCOS_PROFILE
-if (-not $SelectedProfile) {
-    $SelectedProfile = "Performance"
-}
-
-if (-not (Test-Path $manifest)) {
-    Write-Host "Engine manifest missing."
-    exit 1
-}
-
 $EngineManifest = Get-Content $manifest -Raw | ConvertFrom-Json
+
+# =====================================================
+# Playbook Integration
+# =====================================================
+
+function Import-Playbook {
+    param (
+        [string]$PlaybookName
+    )
+    
+    $playbookPath = Join-Path $root "playbooks" "$PlaybookName.json"
+    
+    if (Test-Path $playbookPath) {
+        return Get-Content $playbookPath -Raw | ConvertFrom-Json
+    }
+    
+    return $null
+}
+
+# Try to load the playbook based on profile
+$Playbook = Import-Playbook -PlaybookName $SelectedProfile
+
+if (-not $Playbook) {
+    Write-ArcLog "Playbook '$SelectedProfile' not found, using default engine order" "WARN"
+    $EnginesToRun = @(
+        "ServiceEngine",
+        "TaskEngine",
+        "AppxEngine",
+        "RegistryEngine",
+        "PolicyEngine",
+        "UIEngine",
+        "AvatarEngine",
+        "PerformanceEngine",
+        "WallpaperEngine",
+        "OneDriveEngine",
+        "EdgeEngine"
+    )
+}
+else {
+    Write-ArcLog "Using playbook: $($Playbook.name)"
+    $EnginesToRun = $Playbook.engines
+}
 
 # =====================================================
 # Engine Execution Wrapper
@@ -672,7 +375,8 @@ function Invoke-EngineSafely {
         # Pass configuration to engine
         if ($EngineConfig) {
             & $FunctionName -Config $EngineConfig
-        } else {
+        }
+        else {
             & $FunctionName
         }
 
@@ -701,25 +405,17 @@ function Invoke-EngineSafely {
 # Deployment Start
 # =====================================================
 
-Write-ArcLog "ArcOS deployment starting."
+Write-ArcLog "ArcOS deployment starting with profile: $SelectedProfile"
 Invoke-Precheck
 Initialize-Rollback
 
-# Ordered execution
-$EnginesToRun = @(
-    "OneDriveEngine",
-    "ServiceEngine",
-    "TaskEngine",
-    "AppxEngine",
-    "RegistryEngine",
-    "PolicyEngine",
-    "AvatarEngine",
-    "PerformanceEngine",
-    "UIEngine",
-    "WallpaperEngine"
-)
-
 foreach ($Engine in $EnginesToRun) {
+    # Check if engine is enabled in config
+    if ($Config.engines.$Engine.enabled -eq $false) {
+        Write-ArcLog "$Engine skipped (disabled in config)"
+        continue
+    }
+    
     Invoke-EngineSafely -EngineName $Engine
 }
 
@@ -737,27 +433,57 @@ $ReportData = @{
     Services      = (Get-Service).Count
     RAM_Used_MB   = [math]::Round(
         ((Get-CimInstance Win32_OperatingSystem).TotalVisibleMemorySize -
-         (Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory) / 1024
+        (Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory) / 1024
     )
     Engines       = $ExecutionReport
+    Configuration = @{
+        Profile          = $Config.profile
+        AdvancedSettings = $Config.advanced
+        EngineSettings   = @{}
+    }
 }
 
-$ReportData | ConvertTo-Json -Depth 5 |
-    Out-File (Join-Path $reportPath "deployment.json")
+# Add enabled/disabled status for each engine
+foreach ($engine in $EngineManifest.Keys) {
+    $engineSettings = @{
+        Enabled = $Config.engines.$engine.enabled
+        Config  = $Config.engines.$engine.config
+    }
+    $ReportData.Configuration.EngineSettings.Add($engine, $engineSettings)
+}
 
-Write-ArcLog "ArcOS deployment complete."
+$ReportData | ConvertTo-Json -Depth 10 |
+Out-File (Join-Path $reportPath "deployment.json")
+
+Write-ArcLog "ArcOS deployment complete. Report saved to $reportPath\deployment.json"
+
+# Save configuration backup
+$Config | ConvertTo-Json -Depth 10 |
+Out-File (Join-Path $reportPath "config-backup.json")
 
 # =====================================================
 # Controlled Restart
 # =====================================================
 
-if ($Global:RebootRequired) {
+if ($Global:RebootRequired -and $Config.advanced.autoReboot) {
     Write-Host ""
     Write-Host "Reboot required. Restarting in 5 seconds..."
     Start-Sleep -Seconds 5
     Restart-Computer -Force
 }
+elseif ($Global:RebootRequired) {
+    Write-Host ""
+    Write-Host "Reboot required but auto-reboot disabled. Please restart manually."
+}
 else {
     Write-Host ""
-    Write-Host "ArcOS completed. No reboot required."
+    Write-Host "ArcOS completed successfully. No reboot required."
 }
+
+Write-Host ""
+Write-Host "Summary:"
+Write-Host "- Profile used: $SelectedProfile"
+Write-Host "- Engines executed: $($ExecutionReport.Count)"
+Write-Host "- Successful: $($ExecutionReport.Where({$_.Status -eq 'Success'}).Count)"
+Write-Host "- Failed: $($ExecutionReport.Where({$_.Status -eq 'Failed'}).Count)"
+Write-Host "- Report location: $reportPath\deployment.json"

@@ -1,8 +1,326 @@
 [
   {
+    "Path": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\DataCollection",
+    "Name": "AllowTelemetry",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
+    "Name": "AllowTelemetry",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Policies\\DataCollection",
+    "Name": "AllowTelemetry",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\DataCollection",
+    "Name": "MaxTelemetryAllowed",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Privacy",
+    "Name": "TailoredExperiencesWithDiagnosticDataEnabled",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\AdvertisingInfo",
+    "Name": "Enabled",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\AdvertisingInfo",
+    "Name": "DisabledByGroupPolicy",
+    "Value": 1,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\System",
+    "Name": "EnableActivityFeed",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\System",
+    "Name": "PublishUserActivities",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\System",
+    "Name": "UploadUserActivities",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Sensor\\Overrides\\{BFA794E4-F964-4FDB-90F6-51056BFE4B44}",
+    "Name": "SensorPermissionState",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\lfsvc\\Service\\Configuration",
+    "Name": "Status",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Search",
+    "Name": "CortanaConsent",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Search",
+    "Name": "BingSearchEnabled",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Search",
+    "Name": "AllowSearchToUseLocation",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKCU:\\System\\GameConfigStore",
+    "Name": "GameDVR_Enabled",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKCU:\\System\\GameConfigStore",
+    "Name": "GameDVR_FSEBehaviorMode",
+    "Value": 2,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKCU:\\System\\GameConfigStore",
+    "Name": "GameDVR_HonorUserFSEBehaviorMode",
+    "Value": 1,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKCU:\\System\\GameConfigStore",
+    "Name": "GameDVR_DXGIHonorFSEWindowsCompatible",
+    "Value": 1,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Microsoft\\PolicyManager\\default\\ApplicationManagement\\AllowGameDVR",
+    "Name": "value",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
     "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
     "Name": "EnableTransparency",
     "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+    "Name": "AppsUseLightTheme",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+    "Name": "SystemUsesLightTheme",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKCU:\\SOFTWARE\\Microsoft\\Siuf\\Rules",
+    "Name": "NumberOfSIUFInPeriod",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKCU:\\SOFTWARE\\Microsoft\\Siuf\\Rules",
+    "Name": "PeriodInNanoSeconds",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\Windows Error Reporting",
+    "Name": "Disabled",
+    "Value": 1,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Power",
+    "Name": "HiberbootEnabled",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\FileSystem",
+    "Name": "NtfsDisableLastAccessUpdate",
+    "Value": 1,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Memory Management",
+    "Name": "ClearPageFileAtShutdown",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Memory Management",
+    "Name": "LargeSystemCache",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Memory Management",
+    "Name": "DisablePagingExecutive",
+    "Value": 1,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\PriorityControl",
+    "Name": "Win32PrioritySeparation",
+    "Value": 38,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Power\\PowerThrottling",
+    "Name": "PowerThrottlingOff",
+    "Value": 1,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKCU:\\Control Panel\\Mouse",
+    "Name": "MouseSpeed",
+    "Value": "0",
+    "Type": "String"
+  },
+  {
+    "Path": "HKCU:\\Control Panel\\Mouse",
+    "Name": "MouseThreshold1",
+    "Value": "0",
+    "Type": "String"
+  },
+  {
+    "Path": "HKCU:\\Control Panel\\Mouse",
+    "Name": "MouseThreshold2",
+    "Value": "0",
+    "Type": "String"
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile",
+    "Name": "NetworkThrottlingIndex",
+    "Value": 4294967295,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile",
+    "Name": "SystemResponsiveness",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+    "Name": "TaskbarAnimations",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+    "Name": "ShowTaskViewButton",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+    "Name": "HideFileExt",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+    "Name": "LaunchTo",
+    "Value": 1,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+    "Name": "ShowCopilotButton",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Search",
+    "Name": "SearchboxTaskbarMode",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+    "Name": "SubscribedContent-338388Enabled",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+    "Name": "SubscribedContent-338389Enabled",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+    "Name": "SubscribedContent-353698Enabled",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+    "Name": "SubscribedContent-310093Enabled",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+    "Name": "SilentInstalledAppsEnabled",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+    "Name": "SystemPaneSuggestionsEnabled",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+    "Name": "PreInstalledAppsEnabled",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+    "Name": "OemPreInstalledAppsEnabled",
+    "Value": 0,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\GraphicsDrivers",
+    "Name": "HwSchMode",
+    "Value": 2,
+    "Type": "DWord"
+  },
+  {
+    "Path": "HKLM:\\SYSTEM\\CurrentControlSet\\Control",
+    "Name": "SvcHostSplitThresholdInKB",
+    "Value": 67108864,
     "Type": "DWord"
   }
 ]

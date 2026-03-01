@@ -1,67 +1,70 @@
 function Invoke-ServiceEngine {
+    param (
+        [object]$Config
+    )
 
     Write-ArcLog "Starting service optimization."
 
-    # Services safe to disable on most systems
-    $DisableList = @(
-        "DiagTrack",                # Connected User Experience
-        "dmwappushservice",         # WAP Push
-        "MapsBroker",
-        "RetailDemo",
-        "WMPNetworkSvc",
-        "XboxGipSvc",
-        "XblAuthManager",
-        "XblGameSave",
-        "XboxNetApiSvc",
-        "Fax",
-        "lfsvc",                    # Geolocation
-        "SharedAccess",             # Internet Connection Sharing
-        "WerSvc",                   # Windows Error Reporting
-        "RemoteRegistry"
-    )
+    # Load service list from manifest
+    $manifestPath = Join-Path $PSScriptRoot '..\manifests\services.json'
 
-    foreach ($svc in $DisableList) {
+    if (-not (Test-Path $manifestPath)) {
+        Write-ArcLog "services.json manifest not found." "WARN"
+        return
+    }
+
+    $services = Get-Content $manifestPath -Raw | ConvertFrom-Json
+
+    $disabledCount = 0
+    $manualCount = 0
+    $skippedCount = 0
+
+    foreach ($entry in $services) {
+
+        # Respect config flags
+        $isXbox = $entry.Name -like "Xbox*" -or $entry.Name -like "Xbl*"
+        $isTelemetry = $entry.Name -eq "DiagTrack" -or $entry.Name -eq "dmwappushservice" -or $entry.Name -eq "WerSvc" -or $entry.Name -eq "DPS" -or $entry.Name -eq "WdiServiceHost" -or $entry.Name -eq "WdiSystemHost"
+
+        if ($Config -and $Config.disableXboxServices -eq $false -and $isXbox) {
+            Write-ArcLog "Skipped (Xbox services preserved): $($entry.Name)"
+            $skippedCount++
+            continue
+        }
+
+        if ($Config -and $Config.disableTelemetryServices -eq $false -and $isTelemetry) {
+            Write-ArcLog "Skipped (telemetry services preserved): $($entry.Name)"
+            $skippedCount++
+            continue
+        }
+
         try {
-            $service = Get-Service -Name $svc -ErrorAction SilentlyContinue
-            if ($service) {
-                Stop-Service $svc -Force -ErrorAction SilentlyContinue
-                Set-Service $svc -StartupType Disabled
-                Write-ArcLog "Disabled service: $svc"
+            $svc = Get-Service -Name $entry.Name -ErrorAction SilentlyContinue
+            if (-not $svc) {
+                Write-ArcLog "Service not found (skipping): $($entry.Name)"
+                $skippedCount++
+                continue
+            }
+
+            if ($entry.StartupType -eq "Disabled") {
+                Stop-Service -Name $entry.Name -Force -ErrorAction SilentlyContinue
+                Set-Service  -Name $entry.Name -StartupType Disabled -ErrorAction SilentlyContinue
+                Write-ArcLog "Disabled: $($entry.Name) — $($entry.Description)"
+                $disabledCount++
+            }
+            elseif ($entry.StartupType -eq "Manual") {
+                Set-Service -Name $entry.Name -StartupType Manual -ErrorAction SilentlyContinue
+                Write-ArcLog "Set to Manual: $($entry.Name) — $($entry.Description)"
+                $manualCount++
             }
         }
         catch {
-            Write-ArcLog "Failed disabling: $svc" "WARN"
+            Write-ArcLog "Failed to configure service '$($entry.Name)': $($_.Exception.Message)" "WARN"
         }
     }
 
-    # Convert non-critical services to Manual
-    $ManualList = @(
-        "SysMain",
-        "PrintSpooler",
-        "TabletInputService",
-        "WSearch",
-        "WbioSrvc"
-    )
+    $runningAfter = (Get-Service | Where-Object { $_.Status -eq "Running" }).Count
+    $totalServices = (Get-Service).Count
 
-    foreach ($svc in $ManualList) {
-        try {
-            $service = Get-Service -Name $svc -ErrorAction SilentlyContinue
-            if ($service) {
-                Set-Service $svc -StartupType Manual
-                Write-ArcLog "Set to Manual: $svc"
-            }
-        }
-        catch {
-            Write-ArcLog "Failed setting Manual: $svc" "WARN"
-        }
-    }
-
-    # Report current service count
-    $RunningCount = (Get-Service | Where-Object {$_.Status -eq "Running"}).Count
-    $TotalCount   = (Get-Service).Count
-
-    Write-ArcLog "Total services installed: $TotalCount"
-    Write-ArcLog "Services currently running: $RunningCount"
-
-    Write-ArcLog "Service optimization complete."
+    Write-ArcLog "Service engine complete — Disabled: $disabledCount | Manual: $manualCount | Skipped: $skippedCount"
+    Write-ArcLog "Running services after: $runningAfter / $totalServices total"
 }

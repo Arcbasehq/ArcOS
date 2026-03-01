@@ -53,6 +53,11 @@ function Invoke-AppxEngine {
 
     foreach ($pkg in Get-AppxProvisionedPackage -Online) {
 
+        if ($Protected -contains $pkg.DisplayName) {
+            Write-ArcLog "Protected (skipping): $($pkg.DisplayName)"
+            continue
+        }
+
         if ($Removable -contains $pkg.DisplayName) {
 
             try {
@@ -74,6 +79,10 @@ function Invoke-AppxEngine {
     # =====================================================
 
     foreach ($app in Get-AppxPackage -AllUsers) {
+
+        if ($Protected -contains $app.Name) {
+            continue
+        }
 
         if ($Removable -contains $app.Name) {
 

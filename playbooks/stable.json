@@ -1,0 +1,10 @@
+{
+    "name": "Stable",
+    "description": "Conservative optimizations only — safe for daily drivers and work machines",
+    "engines": [
+        "ServiceEngine",
+        "TaskEngine",
+        "RegistryEngine",
+        "PolicyEngine"
+    ]
+}

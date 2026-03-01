@@ -3,77 +3,91 @@
     "risk": "Stable",
     "requiresReboot": false,
     "reversible": true,
-    "minBuild": 19045,
-    "description": "Optimizes Windows services for better performance and reduced resource usage"
+    "minBuild": 19041,
+    "description": "Disables telemetry, Xbox, diagnostic, and other unnecessary services"
   },
   "TaskEngine": {
     "risk": "Stable",
     "requiresReboot": false,
     "reversible": true,
-    "minBuild": 19045,
-    "description": "Manages scheduled tasks to reduce background activity"
+    "minBuild": 19041,
+    "description": "Disables 40+ telemetry, CEIP, feedback, and bloat scheduled tasks"
   },
   "AppxEngine": {
     "risk": "Performance",
     "requiresReboot": false,
     "reversible": true,
-    "minBuild": 19045,
+    "minBuild": 19041,
     "description": "Removes unnecessary AppX packages and bloatware"
   },
   "RegistryEngine": {
     "risk": "Performance",
     "requiresReboot": false,
     "reversible": true,
-    "minBuild": 19045,
-    "description": "Applies registry optimizations for better system performance"
+    "minBuild": 19041,
+    "description": "Applies 50+ registry tweaks for privacy, performance, and UI"
   },
   "PolicyEngine": {
     "risk": "Performance",
     "requiresReboot": false,
     "reversible": true,
-    "minBuild": 19045,
-    "description": "Configures group policies for privacy and performance"
+    "minBuild": 19041,
+    "description": "Applies 30+ group policy rules for telemetry, privacy, and app permissions"
   },
   "PerformanceEngine": {
     "risk": "Performance",
     "requiresReboot": true,
     "reversible": true,
-    "minBuild": 19045,
-    "description": "Applies system-wide performance optimizations"
+    "minBuild": 19041,
+    "description": "Applies system-wide performance optimizations: HAGS, CPU priority, power throttling, gaming profile"
   },
   "UIEngine": {
     "risk": "Minimal",
     "requiresReboot": false,
     "reversible": true,
-    "minBuild": 19045,
-    "description": "Optimizes UI performance and visual effects"
+    "minBuild": 19041,
+    "description": "Disables transparency, animations, and visual effects for snappier feel"
   },
   "WallpaperEngine": {
     "risk": "Minimal",
     "requiresReboot": false,
     "reversible": true,
-    "minBuild": 19045,
-    "description": "Manages wallpaper customization"
+    "minBuild": 19041,
+    "description": "Applies ArcOS custom wallpaper and accent color"
   },
   "AvatarEngine": {
     "risk": "Minimal",
     "requiresReboot": false,
     "reversible": true,
-    "minBuild": 19045,
-    "description": "Configures user avatar and profile settings"
+    "minBuild": 19041,
+    "description": "Sets custom user account avatar"
   },
   "OneDriveEngine": {
     "risk": "Minimal",
     "requiresReboot": true,
     "reversible": false,
-    "minBuild": 19045,
-    "description": "Manages OneDrive integration and settings"
+    "minBuild": 19041,
+    "description": "Removes or disables OneDrive integration"
   },
   "EdgeEngine": {
     "risk": "Experimental",
     "requiresReboot": false,
     "reversible": true,
-    "minBuild": 19045,
-    "description": "Optimizes Microsoft Edge browser settings"
+    "minBuild": 19041,
+    "description": "Disables Edge startup boost and background mode"
+  },
+  "NetworkEngine": {
+    "risk": "Performance",
+    "requiresReboot": false,
+    "reversible": true,
+    "minBuild": 19041,
+    "description": "Disables Nagle, QoS throttling, LSO; tunes TCP stack and DNS cache for lower latency"
+  },
+  "GamingEngine": {
+    "risk": "Experimental",
+    "requiresReboot": true,
+    "reversible": true,
+    "minBuild": 19041,
+    "description": "Enables Game Mode, HAGS, GPU priority scheduling; disables Game Bar, fullscreen optimizations, power throttling"
   }
 }

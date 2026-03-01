@@ -1,0 +1,14 @@
+{
+    "name": "Privacy",
+    "description": "Maximum telemetry removal and privacy hardening — no gaming or UI tweaks",
+    "engines": [
+        "ServiceEngine",
+        "TaskEngine",
+        "AppxEngine",
+        "RegistryEngine",
+        "PolicyEngine",
+        "NetworkEngine",
+        "OneDriveEngine",
+        "EdgeEngine"
+    ]
+}

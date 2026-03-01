@@ -1,0 +1,14 @@
+{
+    "name": "Gaming",
+    "description": "Maximum gaming performance — low latency, GPU priority, raw mouse input",
+    "engines": [
+        "ServiceEngine",
+        "TaskEngine",
+        "AppxEngine",
+        "RegistryEngine",
+        "PolicyEngine",
+        "PerformanceEngine",
+        "NetworkEngine",
+        "GamingEngine"
+    ]
+}

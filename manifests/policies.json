@@ -1,7 +1,167 @@
 [
   {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
+    "Name": "AllowTelemetry",
+    "Value": 0
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
+    "Name": "LimitDiagnosticLogCollection",
+    "Value": 1
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
+    "Name": "DisableOneSettingsDownloads",
+    "Value": 1
+  },
+  {
     "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\AdvertisingInfo",
     "Name": "DisabledByGroupPolicy",
     "Value": 1
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppCompat",
+    "Name": "DisableInventory",
+    "Value": 1
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppCompat",
+    "Name": "AITEnable",
+    "Value": 0
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppCompat",
+    "Name": "DisableUAR",
+    "Value": 1
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\CloudContent",
+    "Name": "DisableWindowsConsumerFeatures",
+    "Value": 1
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\CloudContent",
+    "Name": "DisableSoftLanding",
+    "Value": 1
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\CloudContent",
+    "Name": "DisableCloudOptimizedContent",
+    "Value": 1
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\System",
+    "Name": "EnableSmartScreen",
+    "Value": 0
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\System",
+    "Name": "AllowClipboardHistory",
+    "Value": 0
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\System",
+    "Name": "AllowCrossDeviceClipboard",
+    "Value": 0
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\GameDVR",
+    "Name": "AllowGameDVR",
+    "Value": 0
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Error Reporting",
+    "Name": "Disabled",
+    "Value": 1
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Error Reporting",
+    "Name": "DontSendAdditionalData",
+    "Value": 1
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Error Reporting",
+    "Name": "LoggingDisabled",
+    "Value": 1
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\HandwritingErrorReports",
+    "Name": "PreventHandwritingErrorReports",
+    "Value": 1
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\TabletPC",
+    "Name": "PreventHandwritingDataSharing",
+    "Value": 1
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\LocationAndSensors",
+    "Name": "DisableLocation",
+    "Value": 1
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\LocationAndSensors",
+    "Name": "DisableLocationScripting",
+    "Value": 1
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\Maps",
+    "Name": "AllowUntriggeredNetworkTrafficOnSettingsPage",
+    "Value": 0
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\Maps",
+    "Name": "AutoDownloadAndUpdateMapData",
+    "Value": 0
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\PowerShell",
+    "Name": "EnableScriptBlockLogging",
+    "Value": 0
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\CurrentVersion\\Software Protection Platform",
+    "Name": "NoGenTicket",
+    "Value": 1
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppPrivacy",
+    "Name": "LetAppsRunInBackground",
+    "Value": 2
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppPrivacy",
+    "Name": "LetAppsAccessCamera",
+    "Value": 2
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppPrivacy",
+    "Name": "LetAppsAccessMicrophone",
+    "Value": 2
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppPrivacy",
+    "Name": "LetAppsAccessLocation",
+    "Value": 2
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppPrivacy",
+    "Name": "LetAppsAccessContacts",
+    "Value": 2
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppPrivacy",
+    "Name": "LetAppsAccessCalendar",
+    "Value": 2
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppPrivacy",
+    "Name": "LetAppsAccessCallHistory",
+    "Value": 2
+  },
+  {
+    "Path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppPrivacy",
+    "Name": "LetAppsAccessEmail",
+    "Value": 2
   }
 ]

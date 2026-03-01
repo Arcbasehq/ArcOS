@@ -113,6 +113,25 @@
         "disableStartupBoost": true,
         "disableBackgroundMode": true
       }
+    },
+    "NetworkEngine": {
+      "enabled": true,
+      "config": {
+        "disableNagle": true,
+        "disableQoSThrottling": true,
+        "optimizeTcpStack": true,
+        "disableLSO": true
+      }
+    },
+    "GamingEngine": {
+      "enabled": false,
+      "config": {
+        "enableGameMode": true,
+        "enableHAGS": true,
+        "disableGameBar": true,
+        "disableFullscreenOptimizations": true,
+        "rawMouseInput": true
+      }
     }
   },
   "advanced": {
